@@ -3,6 +3,8 @@ package pkg
 import (
 	"os"
 
+	"os/exec"
+
 	"path/filepath"
 
 	"strings"
@@ -22,11 +24,7 @@ func ListFiles(dirPath string) []string {
 		}
 
 		if filepath.Ext(filePath) == ".exe" || filepath.Ext(filePath) == ".msi" {	
-
-			filePathReplaced := filepath.Join(filepath.Dir(filePath),strings.Replace(filepath.Base(filePath), " ", "_", -1))
-			// os.Rename(filePath, filePathReplaced)
-
-			filePaths = append(filePaths, filePathReplaced)
+			filePaths = append(filePaths, strings.Replace(filePath, " ", "^ ", -1))
 		}
 
     	return nil
@@ -37,4 +35,19 @@ func ListFiles(dirPath string) []string {
 	}
 
     return filePaths
+}
+
+func InstallProgram(programPath string) bool {
+
+	filePathReplaced := strings.Replace(programPath, " ", "^ ", -1)
+	
+	c := exec.Command("cmd.exe", "/C",filePathReplaced) 
+
+	if err := c.Run(); err != nil { 
+		log.Println(err) 
+		return false
+	}else{
+		return true
+	}
+
 }
