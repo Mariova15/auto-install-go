@@ -24,7 +24,7 @@ func ListFiles(dirPath string) []string {
 		}
 
 		if filepath.Ext(filePath) == ".exe" || filepath.Ext(filePath) == ".msi" {	
-			filePaths = append(filePaths, strings.Replace(filePath, " ", "^ ", -1))
+			filePaths = append(filePaths, filePath)
 		}
 
     	return nil
