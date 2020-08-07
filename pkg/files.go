@@ -53,6 +53,14 @@ func ListFiles(dirPath string) []Program {
 	return programs
 }
 
+func InstallPrograms(programs []Program) {
+
+	for _, program := range programs {
+		InstallProgram(program)
+	}
+
+}
+
 func InstallProgram(program Program) bool {
 
 	c := exec.Command("cmd.exe", "/C", program.path+" "+program.params)
@@ -61,6 +69,7 @@ func InstallProgram(program Program) bool {
 		log.Println(err)
 		return false
 	} else {
+		log.Println(program.productName + " Installed")
 		return true
 	}
 
@@ -89,7 +98,6 @@ func GetFileinfo(filePath string) string {
 		}
 
 		if file != nil {
-			log.Println(file.FileHeader.Characteristics)
 
 			installerType := int(file.FileHeader.Characteristics)
 
@@ -108,14 +116,17 @@ func GetFileinfo(filePath string) string {
 func GetParams(installerType int) string {
 
 	if installerType == 33167 {
+		log.Println(strconv.FormatInt(int64(installerType), 10) + " INNO")
 		// return "INNO"
 		return "/VERYSILENT /SUPPRESSMSGBOXES /NORESTART"
 
 	} else if installerType == 271 || installerType == 258 {
+		log.Println(strconv.FormatInt(int64(installerType), 10) + " NSIS")
 		// return "NSIS"
 		return "/S"
 
 	} else if installerType == 259 {
+		log.Println(strconv.FormatInt(int64(installerType), 10) + " InstallShield")
 		// return "InstallShield"
 		return "/s"
 
@@ -123,4 +134,17 @@ func GetParams(installerType int) string {
 		return strconv.FormatInt(int64(installerType), 10)
 	}
 
+}
+
+func CheckDir(dirPath string) bool {
+	info, err := os.Stat(dirPath)
+	if os.IsNotExist(err) {
+		return false
+	}
+	return info.IsDir()
+}
+
+func InitPrograms() []Program {
+	programs := []Program{}
+	return programs
 }
